@@ -1,0 +1,32 @@
+<div class='progress-wrapper' style="padding-top: 10px;">
+  <div id='progress-bar' class='progress-bar' role='progressbar' style="height:30px; width: 0%; border-radius: 5px; background-color: #68a9ef">&nbsp;</div>
+</div>
+<div id="progress-bar-message">Receiving Task</div>
+<div id="celery-result"></div>
+
+<script type="text/javascript">
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+  function processProgress(progressBarElement, progressBarMessageElement, progress) {
+    progressBarElement.style.width = progress.percent + "%";
+    var description = progress.description || progress.percent;
+    progressBarMessageElement.innerHTML = description;
+  }
+
+  function processSuccess(progressBarElement, progressBarMessageElement, result) {
+      // Build Success URL (replace 'namespace' with your own)
+      // var success_url = "{% url 'targets:detail' object.TNS_name %}"
+      var success_url = "{{ return_url }}"
+      // Redirect to URL
+      window.location.replace(success_url)
+  }
+
+  // Progress Bar (JQuery)
+  $(function () {
+    CeleryProgressBar.initProgressBar(progressUrl, {
+      onProgress: processProgress,
+      onSuccess: processSuccess,
+    })
+  });
+</script>
+<p class="text-center"><div id="celery-result"></div></p>

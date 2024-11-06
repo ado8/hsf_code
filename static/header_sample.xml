@@ -1,0 +1,24 @@
+<SpProg xmlns="https://ukirt.ifa.hawaii.edu/omp/schema/TOML" subtype="none" timestamp="1621495181" type="pr">
+
+  <meta_gui_collapsed>false</meta_gui_collapsed>
+  <meta_gui_filename>sample</meta_gui_filename>
+  <country>USA</country>
+  <ot_version>20201216</ot_version>
+  <pi>Aaron Do</pi>
+  <projectID>U/21A/H01</projectID>
+  <telescope>ukirt</telescope>
+  <title>Supernovae, peculiar velocities and dark matter</title>
+  <SpNote subtype="none" type="no">
+    <meta_gui_collapsed>false</meta_gui_collapsed>
+    <note>Targets shared with U/20A/DJH01.
+Note that the MSBs here have an AT while they do not in the DJH01 program.</note>
+    <title>Syncing with U/20B/DJH01</title>
+  </SpNote>
+  <SpNote subtype="none" type="no">
+    <meta_gui_collapsed>false</meta_gui_collapsed>
+    <note>Experimenting with automatic MSB generation.
+If there are any issues, please let us know.
+ado@hawaii.edu</note>
+    <title>Automatically generated</title>
+  </SpNote>
+</SpProg>

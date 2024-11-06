@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SpProg timestamp="1621239455" type="pr" subtype="none"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://ukirt.ifa.hawaii.edu/omp/schema/TOML">
+
+  <meta_gui_collapsed>false</meta_gui_collapsed>
+  <meta_gui_filename>sample</meta_gui_filename>
+  <country>USA</country>
+  <ot_version>20201216</ot_version>
+  <pi>Aaron Do</pi>
+  <projectID>U/21A/H01</projectID>
+  <telescope>ukirt</telescope>
+  <title>Supernovae, peculiar velocities and dark matter</title>
+  <SpNote type="no" subtype="none">
+    <meta_gui_collapsed>false</meta_gui_collapsed>
+    <note>Targets shared with U/20A/DJH01.
+Note that the MSBs here have an AT while they do not in the DJH01 program.</note>
+    <title>Syncing with U/20B/DJH01</title>
+  </SpNote>
+  <SpMSB checksum="6a9d6ccfaa72219b932b3bc26c753b09" observed="48" remaining="3" type="og" subtype="msb">
+    <meta_gui_collapsed>true</meta_gui_collapsed>
+    <SpSchedConstObsCompRef idref="1"/>
+    <SpSiteQualityObsCompRef idref="0"/>
+    <estimatedDuration units="seconds">578.5</estimatedDuration>
+    <library_version>$Revision$</library_version>
+    <priority>2</priority>
+    <title>AT21test - J band - WFCAM_FLIP_SLOW</title>
+    <totalDuration units="seconds">578.5</totalDuration>
+    <SpSiteQualityObsComp id="0" type="oc" subtype="schedInfo">
+      <meta_gui_collapsed>false</meta_gui_collapsed>
+      <meta_unique>true</meta_unique>
+      <cloud>
+        <min>0</min>
+        <max>20</max>
+      </cloud>
+      <seeing>
+        <min>0.0</min>
+        <max>1.8</max>
+      </seeing>
+    </SpSiteQualityObsComp>
+    <SpSchedConstObsComp id="1" type="oc" subtype="schedConstraints">
+      <meta_display_airmass>true</meta_display_airmass>
+      <meta_gui_collapsed>false</meta_gui_collapsed>
+      <meta_unique>true</meta_unique>
+      <earliest>2021-05-12T00:00:00</earliest>
+      <latest>2022-08-28T01:00:00</latest>
+      <maxEl>90.0</maxEl>
+      <minEl>30.0</minEl>
+      <period>3.0</period>
+    </SpSchedConstObsComp>
+    <SpNote type="no" subtype="none">
+      <meta_gui_collapsed>false</meta_gui_collapsed>
+      <note>This observation will flip a target between camera's 3 and 2 so that alternate frames can be used for sky-subtraction.  Note that the "Observes" should be with the target in camera 3, while the "Skies" should be with the target in camera 2.  
+
+It executes a 2x2 microstep sequence AND a 5-point jitter pattern with the target in camera 3 before switching to camera 2 and repeating the same set of observations.  It is therefore more efficient than FLIP_FAST though it switches between cameras (and therefore samples sky) less frequently.
+
+How to prepare the Target Component:
+1- enter the coordinates of the center of your main target
+2- note that the offsets (-795, -795) will automatically move it to camera 3
+3- change the yOff to +795
+4- click on Add Sky (lower left). This will add the correct sky position that will put your target on camera 2
+5- click again on "Base" in the list of target, so that it is highlighted
+6- Revert back the yOff to -795
+
+At this point you have the two positions, and all you need to do is to add guide stars. Click on the "Plot" button, which will launch the Position Editor. 
+
+Selecting an image:On the position editor, select  Catalog - Image Servers - Digitized Sky at JAC (WFCAM Size). This will display a large image on the guider covering the science area at the base position, and the guider areas at the base and sky positions.
+
+Selecting a catalog for the guide star: Select Catalog - Catalogs - USNO catalog at ESO (this is a good one, other catalogs are also available). This will plot all the cataloged objects on the image displayed on the positions editor.
+
+Adding guide star to your base position:
+Click on "WFCAM AG"; this will draw a rhombus showing the field of the WFCAM guider at the base position. Highlight the "GUIDE" button and click on the brightest (but fainter than R=8.5 mag) cataloged object. This object will get added as the primary guide star for the base position. Selecting GUIDE2 is optional.
+
+Adding guide star to your sky position:
+Click on "WFCAM SKY AG"; this will draw a rhombus showing the field of the WFCAM guider at the sky position. Highlight the "SKYGUIDE" button and click on a cataloged object within the SKY AG rhombus. This will get added as the guide star for the sky position.</note>
+      <title>What this observation does, and how to set up</title>
+    </SpNote>
+    <SpObs msb="false" optional="false" remaining="1" type="ob" subtype="none">
+      <meta_gui_collapsed>true</meta_gui_collapsed>
+      <estimatedDuration units="seconds">38.5</estimatedDuration>
+      <standard>false</standard>
+      <title>Change Filter and Flush - J</title>
+      <SpDRRecipe type="oc" subtype="DRRecipe">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <meta_unique>true</meta_unique>
+        <ArcInGroup>false</ArcInGroup>
+        <ArcRecipe>REDUCE_ARC</ArcRecipe>
+        <BiasInGroup>false</BiasInGroup>
+        <BiasRecipe>QUICK_LOOK</BiasRecipe>
+        <DarkInGroup>false</DarkInGroup>
+        <DarkRecipe>REDUCE_DARK</DarkRecipe>
+        <FlatInGroup>false</FlatInGroup>
+        <FlatRecipe>QUICK_LOOK</FlatRecipe>
+        <FocusInGroup>false</FocusInGroup>
+        <FocusRecipe>REDUCE_FOCUS</FocusRecipe>
+        <ObjectInGroup>true</ObjectInGroup>
+        <ObjectRecipe>QUICK_LOOK</ObjectRecipe>
+        <SkyInGroup>false</SkyInGroup>
+        <SkyRecipe>QUICK_LOOK</SkyRecipe>
+        <title>QUICK_LOOK</title>
+      </SpDRRecipe>
+      <SpInstWFCAM type="oc" subtype="inst.WFCAM">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <meta_unique>true</meta_unique>
+        <meta_version>1</meta_version>
+        <coadds>3</coadds>
+        <configType>Normal</configType>
+        <exposureTime>1.0</exposureTime>
+        <filter>J</filter>
+        <instAper>
+          <value>0.0</value>
+          <value>0.0</value>
+          <value>0.0</value>
+          <value>1.6</value>
+        </instAper>
+        <instPntgOffset>
+          <value>0.0</value>
+          <value>0.0</value>
+        </instPntgOffset>
+        <instPort>Centre</instPort>
+        <readMode>CDS</readMode>
+      </SpInstWFCAM>
+      <SpIterFolder type="if" subtype="none">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <SpIterWFCAMCalObs type="ic" subtype="WFCAMCalObs">
+          <meta_gui_collapsed>false</meta_gui_collapsed>
+          <calType>skyFlat</calType>
+          <coadds>3</coadds>
+          <exposureTime>1</exposureTime>
+          <filter>J</filter>
+          <readMode>CDS</readMode>
+          <repeatCount>1</repeatCount>
+        </SpIterWFCAMCalObs>
+      </SpIterFolder>
+    </SpObs>
+    <SpObs msb="false" optional="false" remaining="1" type="ob" subtype="none">
+      <meta_gui_collapsed>true</meta_gui_collapsed>
+      <estimatedDuration units="seconds">540.0</estimatedDuration>
+      <standard>false</standard>
+      <title>J</title>
+      <SpTelescopeObsComp type="oc" subtype="targetList">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <meta_gui_selectedTelescopePos>Base</meta_gui_selectedTelescopePos>
+        <meta_unique>true</meta_unique>
+        <BASE TYPE="Base">
+          <target>
+            <targetName>AT21mng</targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:37:12.26</c1>
+              <c2>-09:52:52.74</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+          <OFFSET SYSTEM="J2000">
+            <DC1>-795.0</DC1>
+            <DC2>-795.0</DC2>
+          </OFFSET>
+        </BASE>
+        <BASE TYPE="GUIDE">
+          <target>
+            <targetName>AT21mng</targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:18.425</c1>
+              <c2>-10:06:07.74</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+        <BASE TYPE="GUIDE2">
+          <target>
+            <targetName>AT21mng</targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:18.425</c1>
+              <c2>-10:06:07.74</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+        <BASE TYPE="SKY0">
+          <target>
+            <targetName>AT21mng</targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:18.425</c1>
+              <c2>-10:06:07.74</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+        <BASE TYPE="SKYGUIDE0">
+          <target>
+            <targetName></targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:12.955</c1>
+              <c2>-10:05:03.51</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+        <BASE TYPE="SKYGUIDE1">
+          <target>
+            <targetName></targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:18.251</c1>
+              <c2>-10:07:59.12</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+        <BASE TYPE="SKYGUIDE2">
+          <target>
+            <targetName></targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:20.228</c1>
+              <c2>-10:08:05.28</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+        <BASE TYPE="SKYGUIDE3">
+          <target>
+            <targetName></targetName>
+            <spherSystem SYSTEM="J2000">
+              <c1>20:36:18.797</c1>
+              <c2>-10:04:14.92</c2>
+              <rv defn="radio" frame="LSRK">0.0</rv>
+            </spherSystem>
+          </target>
+        </BASE>
+      </SpTelescopeObsComp>
+      <SpNote type="no" subtype="none">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <note>In the Target component below, the BASE should put the target in camera 3.  The SKY should then put the target in camera 2.  NOTE:  Use a dummy MSB to get the coords for the SKY and the SKYGUIDE.</note>
+        <title>What to put in the target component</title>
+      </SpNote>
+      <SpNote type="no" subtype="none">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <note>JITTER_FLIP32 is the DR recipe to be used for WFCAM_FLIP observations of an object alternating between cameras #3 and #2 with the "Base" position in camera #3.  If you decide to alternate between any other set of cameras, change the recipe accordingly.</note>
+        <title>DRrecipe</title>
+      </SpNote>
+      <SpDRRecipe type="oc" subtype="DRRecipe">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <meta_unique>true</meta_unique>
+        <ArcInGroup>false</ArcInGroup>
+        <ArcRecipe>REDUCE_ARC</ArcRecipe>
+        <BiasInGroup>false</BiasInGroup>
+        <BiasRecipe>REDUCE_BIAS</BiasRecipe>
+        <DarkInGroup>false</DarkInGroup>
+        <DarkRecipe>REDUCE_DARK</DarkRecipe>
+        <FlatInGroup>false</FlatInGroup>
+        <FlatRecipe>REDUCE_FLAT</FlatRecipe>
+        <FocusInGroup>false</FocusInGroup>
+        <FocusRecipe>REDUCE_FOCUS</FocusRecipe>
+        <ObjectInGroup>true</ObjectInGroup>
+        <ObjectRecipe>JITTER_FLIP32</ObjectRecipe>
+        <SkyInGroup>true</SkyInGroup>
+        <SkyRecipe>JITTER_FLIP32</SkyRecipe>
+        <title>JITTER_FLIP32</title>
+      </SpDRRecipe>
+      <SpNote type="no" subtype="none">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <note>Set filters and exposure times etc in the WFCAM component.
+
+In general, we advocate sticking to 5s or 10s exposures for J, H, K.</note>
+        <title>WFCAM component</title>
+      </SpNote>
+      <SpInstWFCAM type="oc" subtype="inst.WFCAM">
+        <meta_gui_collapsed>false</meta_gui_collapsed>
+        <meta_unique>true</meta_unique>
+        <meta_version>1</meta_version>
+        <coadds>1</coadds>
+        <configType>Normal</configType>
+        <exposureTime>10.0</exposureTime>
+        <filter>J</filter>
+        <instAper>
+          <value>0.0</value>
+          <value>0.0</value>
+          <value>0.0</value>
+          <value>1.6</value>
+        </instAper>
+        <instPntgOffset>
+          <value>0.0</value>
+          <value>0.0</value>
+        </instPntgOffset>
+        <instPort>Centre</instPort>
+        <readMode>NDR_1.0</readMode>
+      </SpInstWFCAM>
+      <SpIterFolder type="if" subtype="none">
+        <meta_gui_collapsed>true</meta_gui_collapsed>
+        <SpNote type="no" subtype="none">
+          <meta_gui_collapsed>false</meta_gui_collapsed>
+          <note>If you are using a "non standard" exposure time, you will need to insert some darks here. I recomend adding 3 to 5 darks if you need them.  See WFCAM web pages for details.</note>
+          <title>DARKS</title>
+        </SpNote>
+        <SpIterRepeat type="ic" subtype="repeat">
+          <meta_gui_collapsed>true</meta_gui_collapsed>
+          <repeatCount>1</repeatCount>
+          <title>Repeat 1X</title>
+          <SpIterOffset type="ic" subtype="offset">
+            <meta_gui_collapsed>false</meta_gui_collapsed>
+            <meta_gui_selectedOffsetPos>Offset0</meta_gui_selectedOffsetPos>
+            <obsArea>
+              <PA>0.0</PA>
+              <OFFSET>
+                <DC1>0.0</DC1>
+                <DC2>0.0</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>6.4</DC1>
+                <DC2>6.4</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>-6.4</DC1>
+                <DC2>6.4</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>-6.4</DC1>
+                <DC2>-6.4</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>6.4</DC1>
+                <DC2>-6.4</DC2>
+              </OFFSET>
+            </obsArea>
+            <title>jitter 5 6.4arcsec</title>
+            <SpIterMicroStep type="ic" subtype="microstep">
+              <meta_gui_collapsed>false</meta_gui_collapsed>
+              <obsArea>
+                <PA>0.0</PA>
+                <OFFSET>
+                  <DC1>0.0</DC1>
+                  <DC2>0.0</DC2>
+                </OFFSET>
+                <OFFSET>
+                  <DC1>0.0</DC1>
+                  <DC2>4.18</DC2>
+                </OFFSET>
+                <OFFSET>
+                  <DC1>4.18</DC1>
+                  <DC2>4.18</DC2>
+                </OFFSET>
+                <OFFSET>
+                  <DC1>4.18</DC1>
+                  <DC2>0.0</DC2>
+                </OFFSET>
+              </obsArea>
+              <pattern>2x2 medium</pattern>
+              <SpIterObserve type="ic" subtype="observe">
+                <meta_gui_collapsed>false</meta_gui_collapsed>
+                <repeatCount>1</repeatCount>
+              </SpIterObserve>
+            </SpIterMicroStep>
+          </SpIterOffset>
+          <SpIterOffset type="ic" subtype="offset">
+            <meta_gui_collapsed>true</meta_gui_collapsed>
+            <meta_gui_selectedOffsetPos>Offset0</meta_gui_selectedOffsetPos>
+            <obsArea>
+              <PA>0.0</PA>
+              <OFFSET>
+                <DC1>0.0</DC1>
+                <DC2>0.0</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>6.4</DC1>
+                <DC2>6.4</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>-6.4</DC1>
+                <DC2>6.4</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>-6.4</DC1>
+                <DC2>-6.4</DC2>
+              </OFFSET>
+              <OFFSET>
+                <DC1>6.4</DC1>
+                <DC2>-6.4</DC2>
+              </OFFSET>
+            </obsArea>
+            <title>jitter 5 6.4arcsec</title>
+            <SpIterMicroStep type="ic" subtype="microstep">
+              <meta_gui_collapsed>true</meta_gui_collapsed>
+              <obsArea>
+                <PA>0.0</PA>
+                <OFFSET>
+                  <DC1>0.0</DC1>
+                  <DC2>0.0</DC2>
+                </OFFSET>
+                <OFFSET>
+                  <DC1>0.0</DC1>
+                  <DC2>4.18</DC2>
+                </OFFSET>
+                <OFFSET>
+                  <DC1>4.18</DC1>
+                  <DC2>4.18</DC2>
+                </OFFSET>
+                <OFFSET>
+                  <DC1>4.18</DC1>
+                  <DC2>0.0</DC2>
+                </OFFSET>
+              </obsArea>
+              <pattern>2x2 medium</pattern>
+              <SpIterSky type="ic" subtype="sky">
+                <meta_gui_collapsed>false</meta_gui_collapsed>
+                <followOffset>false</followOffset>
+                <repeatCount>1</repeatCount>
+                <sky>SKY0</sky>
+                <useRandom>false</useRandom>
+              </SpIterSky>
+            </SpIterMicroStep>
+          </SpIterOffset>
+        </SpIterRepeat>
+      </SpIterFolder>
+    </SpObs>
+  </SpMSB>
+</SpProg>

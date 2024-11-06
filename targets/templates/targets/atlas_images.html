@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="ImgTable">
+  <table style="width:100%">
+    <tr>
+      <th style="width:10%">MJD</th>
+      <th colspan="4">Images ~2'x2'</th>
+    </tr>
+    {% for mjd,ATLAS_obs in ATLAS_epochs.items %}
+      <tr>
+        <td>{{ mjd }}</td>
+        {% for values in ATLAS_obs %}
+          {% if values.1 == 'o' %}
+            <td style="color:orange">
+          {% elif values.1 == 'c' %}
+            <td style="color:cyan">
+          {% endif %}
+            {{ values.0 }}
+            <div class="row">
+              <img src="/media/{{ object.TNS_name }}/atlas_stamps/{{ values.0 }}.red.png" style="width:50%;">
+              <img src="/media/{{ object.TNS_name }}/atlas_stamps/{{ values.0 }}.diff.png" style="width:50%;">
+            </div>
+            {{ values.2 }} +/- {{ values.3 }}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

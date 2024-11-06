@@ -1,0 +1,3 @@
+# skycalc_cli -i skycalc_defaults.txt -o skycalc_template.fits
+airmass: 1.2
+observatory: paranal

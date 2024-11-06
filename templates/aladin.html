@@ -1,0 +1,56 @@
+<!-- include Aladin Lite CSS file in the head section of your page -->
+<link rel="stylesheet" href="https://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
+
+<!-- insert this snippet where you want Aladin Lite viewer to appear and after the loading of jQuery -->
+<div id="aladin-lite-div" class="aladin-container" style="order: 2;width:100%;height:400px">
+
+  <style type="text/css">
+    .aladin-popup {
+        color: rgb(0, 0, 0);
+    }
+    .aladin-popupTitle {
+        color: rgb(0, 0, 0);
+    }
+  </style>
+
+  <script type="text/javascript" src="//aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js" charset="utf-8"></script>
+  <script type="text/javascript">
+    {% if object.dec > -30 %}
+      var imagesurvey = "P/PanSTARRS/DR1/color-z-zg-g";
+    {% else %}
+      var imagesurvey = "P/SDSS2/color";
+    {% endif %}
+    var aladin = A.aladin('#aladin-lite-div', {survey: imagesurvey, fov:0.05, target:"{{ object.ra }} {{ object.dec }}"});
+
+    var GalaxyLayer = A.catalog({name: 'Galaxies', sourceSize: 5, color: 'blue', shape: 'circle', onClick: 'showPopup'});
+    {% for pk,ra,dec,z,z_flag in nearby_galaxies|get_value_in_qs:"pk ra dec z z_flag" %}
+      GalaxyLayer.addSources([A.source({{ ra }}, {{ dec }}, {"HSF ID":'{{ pk }}', z:'{{ z }}', z_flag:'{{ z_flag }}'})])
+    {% endfor %}
+    aladin.addCatalog(GalaxyLayer);
+    var SNLayer = A.catalog({name: 'Transient', sourceSize: 10, color: 'red', shape: 'triangle', onClick: 'showPopup'});
+    SNLayer.addSources([A.marker({{ object.ra }}, {{ object.dec }}, {popupTitle:'{{ object.TNS_name }}', popupDesc:''})]);
+    {% if object.galaxy %}
+      SNLayer.addSources([A.marker({{ object.galaxy.ra }}, {{ object.galaxy.dec }}, {popupTitle:'Assumed Host Galaxy', popupDesc:'z: {{ object.galaxy.z|floatformat:7 }}<br>z_err: {{object.galaxy.z_err|floatformat:8 }}'})]);
+    {% endif %}
+    aladin.addCatalog(SNLayer);
+    // define function triggered when an object is clicked
+    var objClicked;
+    aladin.on('objectClicked', function(object) {
+                    var msg;
+                    if (object) {
+                                 objClicked = object;
+                                 object.select();
+                                 msg = 'HSF ID: ' + object.data["HSF ID"];
+                                 host_msg = "Set as host";
+                                }
+                    else {
+                          objClicked.deselect();
+                          msg = 'No galaxy on record. \nRA: ' +aladin.getRaDec()[0] + '\nDec: ' + aladin.getRaDec()[1];
+                          host_msg = "Create galaxy at coordinates";
+                         }
+                    document.getElementById('aladin_coords').setAttribute("value", msg);
+                    document.getElementById('set_host_galaxy').setAttribute("value", host_msg);
+              })
+
+  </script>
+</div>

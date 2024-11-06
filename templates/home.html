@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Current Totals</h2>
+<div class="row">
+  <div class="left" style="flex:40%;">
+    <table style="width: 50%">
+      <thead>
+        <tr>
+          <td>At least 1 NIR epoch</td>
+          <td>Ia</td>
+          <td>Unknown</td>
+          <td>Subtotal</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>With host z</td>
+          <td><a href='{{ base_str }}{{ ia_str }}{{ gal_str }}min_obs_num=1'>{{ ias_w_obs_and_z.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ unknown_str }}{{ gal_str }}min_obs_num=1'>{{ unknown_w_obs_and_z.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ gal_str }}min_obs_num=1'>{{ good_z }}</a></td>
+        </tr>
+        <tr>
+          <td>Needs host z</td>
+          <td><a href='{{ base_str }}{{ ia_str }}&spectrum=need&min_obs_num=1'>{{ ias_w_obs_needs_z.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ unknown_str }}&spectrum=need&min_obs_num=1'>{{ unknown_w_obs_needs_z.0 }}</a></td>
+          <td><a href='{{ base_str }}&spectrum=need&min_obs_num=1'>{{ needs_z }}</a></td>
+        </tr>
+        <tr>
+          <td>Subtotal</td>
+          <td><a href='{{ base_str }}{{ ia_str }}min_obs_num=1'>{{ ias.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ unknown_str }}min_obs_num=1'>{{ unknown.0 }}</a></td>
+          <td><a href='{{ base_str }}min_obs_num=1'>{{ all }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="right" style="flex:40%;">
+    <table style="width: 50%">
+      <thead>
+        <tr>
+          <td>At least 3 NIR epochs</td>
+          <td>Ia</td>
+          <td>Unknown</td>
+          <td>Subtotal</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>With host z</td>
+          <td><a href='{{ base_str }}{{ ia_str }}{{ gal_str }}min_obs_num=6'>{{ 3ias_w_obs_and_z.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ unknown_str }}{{ gal_str }}min_obs_num=6'>{{ 3unknown_w_obs_and_z.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ gal_str }}min_obs_num=6'>{{ good_z }}</a></td>
+        </tr>
+        <tr>
+          <td>Needs host z</td>
+          <td><a href='{{ base_str }}{{ ia_str }}&spectrum=need&min_obs_num=6'>{{ 3ias_w_obs_needs_z.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ unknown_str }}&spectrum=need&min_obs_num=6'>{{ 3unknown_w_obs_needs_z.0 }}</a></td>
+          <td><a href='{{ base_str }}&spectrum=need&min_obs_num=6'>{{ 3needs_z }}</a></td>
+        </tr>
+        <tr>
+          <td>Subtotal</td>
+          <td><a href='{{ base_str }}{{ ia_str }}min_obs_num=6'>{{ 3ias.0 }}</a></td>
+          <td><a href='{{ base_str }}{{ unknown_str }}min_obs_num=6'>{{ 3unknown.0 }}</a></td>
+          <td><a href='{{ base_str }}min_obs_num=6'>{{ 3all }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+<p>
+Small warning:
+<br>
+Links lead to a search form that doesn't currently include all the objects it should.
+<br>
+Unknowns do not include objects classified as a type I SN, which could be a Ia.
+</p>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+# dirs
+ado/
+atlas/
+chains/
+env/
+HSF/
+lc/
+logs/
+media/
+forward_model_phot/
+reduced_data/
+rubin/
+static/salt3*
+static/calspec/
+thomas/
+unity_standalone/
+unity_runs/
+
+# specific files
+HSF
+stan*
+celerybeat*
+*.env
+hawaii-supernova-flows-*.json
+.my.cnf
+snippets.py
+tmux*
+static/GLADE+.txt
+static/filters/*ANDI*
+
+# general
+*pycache*
+*migrations*
+*pyraf*
+db*
+foo*
+bar*
+*.tmp
+*.tar.gz
+*.conf
+*.swp

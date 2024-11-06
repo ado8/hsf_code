@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if task_id %}
+  <div class='progress-wrapper' style="padding-top: 10px;">
+    <div id='progress-bar' class='progress-bar' role='progressbar' style="height:30px; width: 0%; border-radius: 5px; background-color: #68a9ef">&nbsp;</div>
+  </div>
+  <div id="progress-bar-message">Receiving Task</div>
+  <div id="celery-result"></div>
+
+  <script type="text/javascript">
+    var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+    function processProgress(progressBarElement, progressBarMessageElement, progress) {
+      progressBarElement.style.width = progress.percent + "%";
+      var description = progress.description || progress.percent;
+      progressBarMessageElement.innerHTML = description;
+    }
+
+    function processSuccess(progressBarElement, progressBarMessageElement, result) {
+        // Build Success URL (replace 'namespace' with your own)
+        var success_url = "{% url 'targets:detail' object.TNS_name %}"
+        // Redirect to URL
+        window.location.replace(success_url)
+    }
+
+    // Progress Bar (JQuery)
+    $(function () {
+      CeleryProgressBar.initProgressBar(progressUrl, {
+        onProgress: processProgress,
+        onSuccess: processSuccess,
+      })
+    });
+  </script>
+{% endif %}
+
+<form name="redo_offsets" method="POST">{% csrf_token %}
+  <input type="submit" value="Redo offsets">
+  <div class="ImgTable">
+    <table style="width:100%">
+      {% for obs,im in obs_im %}
+        <tr>
+          <td style="width:10%">
+            <table>
+              <tr>
+                <td>
+                  Name:
+                </td>
+                <td colspan="2">
+                  {{ obs.name }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Bandpass:
+                </td>
+                <td colspan="2">
+                  {{ obs.bandpass }}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3">
+                  Manual Offsets
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>RA (")</td>
+                <td>Dec (")</td>
+              </tr>
+              <tr>
+                <td>
+                  Rotation:
+                </td>
+                <td>
+                  <input name="rot_ra_{{ obs.name }}" type="number" step="any" value="{{ im.rot_ra }}">
+                </td>
+                <td>
+                  <input name="rot_dec_{{ obs.name }}" type="number" step="any" value="{{ im.rot_dec }}">
+                </td>
+              </tr>
+            </table>
+            <select name="status_{{ obs.name }}" value="{{ im.status }}">
+                <option value="g" {% if im.status == "g" %}selected="selected"{% endif %}>Good</option>
+                <option value="f" {% if im.status == "f" %}selected="selected"{% endif %}>Fixable</option>
+                <option value="b" {% if im.status == "b" %}selected="selected"{% endif %}>Bad</option>
+                <option value="?" {% if im.status == "?" %}selected="selected"{% endif %}>Uninspected</option>
+            </select>
+          </td>
+          <td>
+            <img src="/media/{{ object.TNS_name }}/thumbnails/{{ obs.name }}.{{ obs.sn_mef }}.rotsub.png">
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</form>
+{% endblock %}

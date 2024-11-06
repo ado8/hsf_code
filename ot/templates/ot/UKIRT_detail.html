@@ -1,0 +1,18 @@
+{% extends 'target_detail.html' %}
+
+{% block extramiddle  %}
+<div class="btn-grp">
+  <form action="." method="POST">{% csrf_token %}
+    <h3> Next <br>
+      {% if page_type == "add/junk" %}
+        <input type='submit' name='c_next' value='Candidate'/>
+        <input type='submit' name='j_next' value='Junk'/>
+        <input type='submit' name='q_next' value='Queue'/>
+      {% elif page_type == "keep/drop" %}
+        <input type='submit' name='k_next' value='Keep'/>
+        <input type='submit' name='d_next' value='Drop'/>
+      {% endif %}
+    </h3>
+  </form>
+</div>
+{% endblock %}

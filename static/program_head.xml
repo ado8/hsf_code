@@ -1,0 +1,24 @@
+<SpProg xmlns="https://ukirt.ifa.hawaii.edu/omp/schema/TOML" subtype="none" timestamp="1655642788" type="pr">
+
+  <meta_gui_collapsed>false</meta_gui_collapsed>
+  <meta_gui_filename>220620.xml</meta_gui_filename>
+  <country>USA</country>
+  <ot_version>20201216</ot_version>
+  <pi>Aaron Do</pi>
+  <projectID>U/22B/H01</projectID>
+  <telescope>ukirt</telescope>
+  <title>Supernovae, peculiar velocities and dark matter</title>
+  <SpNote id="2" observeInstruction="true" subtype="none" type="no">
+    <meta_gui_collapsed>false</meta_gui_collapsed>
+    <note>Targets shared with U/22A/DU01.
+Note that the MSBs here have an AT while they do not in the DJH01 program.</note>
+    <title>Syncing with U/22A/DU01</title>
+  </SpNote>
+  <SpNote id="3" observeInstruction="true" subtype="none" type="no">
+    <meta_gui_collapsed>false</meta_gui_collapsed>
+    <note>Experimenting with automatic MSB generation.
+If there are any issues, please let us know.
+ado@hawaii.edu</note>
+    <title>Automatically generated</title>
+  </SpNote>
+</SpProg>

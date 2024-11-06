@@ -1,0 +1,195 @@
+{% extends 'target_detail.html' %}
+{% block extrabottom %}
+<div class="footer">
+  <button type="button" class="collapsible">UKIRT Observations</button>
+  <div class="CollapsibleContent">
+    <div class="ImgTable">
+      <table style="width:100%">
+        <tr>
+          <th style="width:10%">Image Name</th>
+          <th>No Subtraction
+            <form action="." method="POST">{% csrf_token %}
+              <input name="nosub preferences" type="submit" value="Set default">
+            </form>
+          </th>
+          {% if object.reference_set.first %}
+            <th>Reference Subtraction
+              <form action="." method="POST">{% csrf_token %}
+                <input name="refub preferences" type="submit" value="Set default">
+              </form>
+            </th>
+          {% endif %}
+          {% if object.galaxy.ra %}
+            <th>Rotational Subtraction
+              <form action="." method="POST">{% csrf_token %}
+                <input name="rotsub preferences" type="submit" value="Set default">
+              </form>
+            </th>
+          {% endif %}
+        </tr>
+        {% for obs in observations %}
+          <tr>
+            <form name="{{ obs.name }}" action="." method="POST">{% csrf_token %}
+              <td rowspan="2" style="width:10%">
+                <table>
+                  <tr>
+                    <td>
+                      Name:
+                    </td>
+                    <td colspan="2">
+                      {{ obs.name }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Bandpass:
+                    </td>
+                    <td colspan="2">
+                      {{ obs.bandpass }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      Manual Offsets
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>x</td>
+                    <td>y</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      SN:
+                    </td>
+                    <td>
+                      <input name="sn_dx_{{ obs.name }}" type="number" step="any" value="{{ obs.sn_dx }}">
+                    </td>
+                    <td>
+                      <input name="sn_dy_{{ obs.name }}" type="number" step="any" value="{{ obs.sn_dy }}">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Rotation:
+                    </td>
+                    <td>
+                      <input name="rot_dx_{{ obs.name }}" type="number" step="any" value="{{ obs.rot_dx }}">
+                    </td>
+                    <td>
+                      <input name="rot_dy_{{ obs.name }}" type="number" step="any" value="{{ obs.rot_dy }}">
+                    </td>
+                  </tr>
+                </table>
+                <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="none" {% if obs.preferred_sub_type == 'none' %} checked {% endif %} style="display:none">
+                <input type="submit" value="Redo offsets">
+              </td>
+              <td>
+                <label>
+                  <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="nosub" {% if obs.preferred_sub_type == 'nosub' %} checked {% endif %}>
+                  <img src="/media/{{ object.TNS_name }}/thumbnails/{{ obs.name }}.nosub.png">
+                </label>
+              </td>
+              {% if object.reference_set.first %}
+                <td>
+                  <label>
+                    <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="refsub" {% if obs.preferred_sub_type == 'refsub' %} checked {% endif %}>
+                    <img src="/media/{{ object.TNS_name }}/thumbnails/{{ obs.name }}.refsub.png">
+                  </label>
+                </td>
+              {% endif %}
+              {% if object.galaxy.ra %}
+                <td>
+                  <label>
+                    <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="rotsub" {% if obs.preferred_sub_type == 'rotsub' %} checked {% endif %}>
+                    <img src="/media/{{ object.TNS_name }}/thumbnails/{{ obs.name }}.rotsub.png">
+                  </label>
+                </td>
+              {% endif %}
+            </form>
+          </tr>
+          <tr>
+            {% for res in obs.results_set.all %}
+              {% if res.sub_type == 'nosub' %}
+                <td>
+                  {{ res.mag|floatformat:3 }} +/- {{ res.dmag|floatformat:3 }}
+                </td>
+              {% endif %}
+              {% if res.sub_type == 'refsub' %}
+                <td>
+                  {{ res.mag|floatformat:3 }} +/- {{ res.dmag|floatformat:3 }}
+                </td>
+              {% endif %}
+              {% if res.sub_type == 'rotsub' %}
+                <td>
+                  {{ res.mag|floatformat:3 }} +/- {{ res.dmag|floatformat:3 }}
+                </td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <button type="button" class="collapsible">ATLAS Observations</button>
+  <div class="CollapsibleContent">
+    <div class="ImgTable">
+      <table style="width:100%">
+        <tr>
+          <th style="width:10%">MJD</th>
+          <th colspan="4">Images 6'x6'</th>
+        </tr>
+        {% for mjd,ATLAS_obs in ATLAS_epochs.items %}
+          <tr>
+            <td>{{ mjd }}</td>
+            {% for values in ATLAS_obs %}
+              {% if values.1 == 'o' %}
+                <td style="color:orange">
+              {% elif values.1 == 'c' %}
+                <td style="color:cyan">
+              {% endif %}
+                {{ values.0 }}
+                <div class="row">
+                  <img src="/media/{{ object.TNS_name }}/atlas_stamps/{{ values.0 }}.red.png">
+                  <img src="/media/{{ object.TNS_name }}/atlas_stamps/{{ values.0 }}.diff.png">
+                </div>
+                {{ values.2 }} +/- {{ values.3 }}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+var checked_val = "none";
+var name = "sub_type_name";
+$(".image_radio").on("click", function(){
+  name = $(this).attr("name");
+  if($(this).val() == checked_val){
+    $('input[name='+name+'][value=none]').prop("checked",true);
+    checked_val = "none";
+  }else{
+    checked_val = $(this).val();
+    $('input[name='+name+'][value=none]').propRemove("checked");
+  }
+});
+</script>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        } 
+    });
+}
+</script>
+{% endblock %}

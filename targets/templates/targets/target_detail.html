@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+
+{% block extrahead  %}
+
+{{ script|safe }}
+
+{% endblock %}
+
+{% block extrastyle %}
+/* HIDE RADIO */
+[type=radio] {
+position: absolute;
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+/* IMAGE STYLES */
+[type=radio] + img {
+cursor: pointer;
+}
+
+/* CHECKED STYLES */
+[type=radio]:checked + img {
+outline: 2px solid #f00;
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="left">
+    <div class="row">
+      <div class="left">
+        <form action="." name="status" method=POST style="margin:0;padding:0">{% csrf_token %}
+          <table style="">
+            <tr><td colspan="3"><h2>20{{ object.TNS_name }}</h2></td></tr>
+            <tr><td colspan="3"><h3>See on <a href="https://www.wis-tns.org/object/20{{ object.TNS_name }}">TNS</a>
+                 or <a href="http://ned.ipac.caltech.edu/cgi-bin/nph-objsearch?lon={{ object.ra }}d&lat={{ object.dec }}d&radius=2.0&search_type=Near+Position+Search">NED</a></h3></td></tr>
+            <tr><td>Time till peak</td>
+                {% if object.time_to_peak %}
+                  <td colspan="2">{{ object.time_to_peak }}</td>
+                {% else %}
+                  <td colspan="2">Past peak</td>
+                {% endif %}
+            </tr>
+            <tr><td colspan=3> RA/Dec </td></tr>
+            <tr><td>Deg</td><td>{{ object.ra|floatformat:4 }}</td><td>{{ object.dec|floatformat:5 }}</td>
+            <tr><td>HMS</td><td>{{ object.HMS_coords.0 }}</td><td>{{ object.HMS_coords.1 }}</td></tr>
+            <tr><td>Type</td><td colspan="2">{{ form.sn_type }}</td></tr>
+            <tr><td>Discovering Group</td><td colspan="2"> {{ object.discovering_group }}</td></tr>
+            <tr><td>Detection Date</td><td colspan="2"> {{ object.detection_date|floatformat:3 }}</td></tr>
+            <tr><td>Target Status</td><td colspan="2">{{ form.status }}</td></tr>
+            <tr><td>UKIRT Epochs</td><td colspan="2"> {{ epochs }}</td></tr>
+            {% if object.galaxy %}
+              <tr><td>Galaxy Name</td><td colspan="2"> {{ object.galaxy.names.0 }}</td></tr>
+              <tr><td>Galaxy Status</td><td colspan="2"> {{ form.gal_status }}</td></tr>
+              {% for filt,mag in object.galaxy.mags.items %}
+                <tr><td>  {{ filt }}</td><td colspan="2"> {{ mag|floatformat:2 }}</td></tr>
+              {% endfor %}
+              <tr><td>Redshift</td><td colspan="2"> {{ form.gal_z }}</td></tr>
+              <tr><td>z_err</td><td colspan="2"> {{ form.gal_z_err }}</td></tr>
+            {% endif %}
+          </table>
+          <input type="submit" value="Submit changes">
+        </form>
+      </div>
+      <div class="right">
+        <div>
+          <!-- fix to config selector  -->
+          <table>
+            <tr>
+              <th><h2>SNPY</h2></th>
+              <th>Value</th>
+              <th>Stat</th>
+              <th>Sys</th>
+            </tr>
+            {% for res in fitresults %}
+              {% if res.model_name == 'snpy_ebv_model2' %}
+                {% for key,list in res.summarize.0.items %}
+                  <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ list.0|floatformat:3 }}</td>
+                    <td>{{ list.1|floatformat:3 }}</td>
+                    <td>{{ list.2|floatformat:3 }}</td>
+                  </tr>
+                {% endfor %}
+                {% for key,chi in res.summarize.1.items %}
+                  <tr>
+                      <td> chi2 {{ key }} </td>
+                    <td colspan="3"> {{ chi|floatformat:2 }} </td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+        {% if task_id %}
+          <div class='progress-wrapper' style="padding-top: 10px;">
+            <div id='progress-bar' class='progress-bar' role='progressbar' style="height:30px; width: 0%; border-radius: 5px; background-color: #68a9ef">&nbsp;</div>
+          </div>
+          <div id="progress-bar-message">Receiving Task</div>
+          <div id="celery-result"></div>
+
+          <script type="text/javascript">
+            var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+            function processProgress(progressBarElement, progressBarMessageElement, progress) {
+              progressBarElement.style.width = progress.percent + "%";
+              var description = progress.description || progress.percent;
+              progressBarMessageElement.innerHTML = description;
+            }
+
+            function processSuccess(progressBarElement, progressBarMessageElement, result) {
+                // Build Success URL (replace 'namespace' with your own)
+                var success_url = "{% url 'targets:detail' object.TNS_name %}"
+                // Redirect to URL
+                window.location.replace(success_url)
+            }
+
+            // Progress Bar (JQuery)
+            $(function () {
+              CeleryProgressBar.initProgressBar(progressUrl, {
+                onProgress: processProgress,
+                onSuccess: processSuccess,
+              })
+            });
+          </script>
+        {% else %}
+        <div class="btn-grp">
+          <form action="." method="POST">{% csrf_token %}
+              <h3>Updates</h3><br><br>
+            <input type="submit" name="updateoptbtn" value="Optical LC">
+            <input type="submit" name="updatejbtn" value="J LC">
+            <input type="submit" name="snpybtn" value="SNooPy">
+            <input type="submit" name="sncosmobtn" value="SNCosmo">
+            <input type="submit" name="galcandbtn" value="Candidate Galaxies">
+            <input type="submit" name="galcoords" id="galcoords" value="Host Galaxy">
+          </form>
+	    </div>
+        {% endif %}
+        <p class="text-center">
+          <div id="celery-result"></div>
+        </p>
+      </div>
+    </div>
+    <!-- include Aladin Lite CSS file in the head section of your page -->
+    <link rel="stylesheet" href="https://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
+
+    <!-- insert this snippet where you want Aladin Lite viewer to appear and after the loading of jQuery -->
+    <div id="aladin-lite-div" class="aladin-container" style="order: 2;width:100%;height:400px">
+
+      <style type="text/css">
+        .aladin-popup {
+            color: rgb(0, 0, 0);
+        }
+        .aladin-popupTitle {
+            color: rgb(0, 0, 0);
+        }
+      </style>
+
+      <script type="text/javascript" src="//aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js" charset="utf-8"></script>
+      <script type="text/javascript">
+        var aladin = A.aladin('#aladin-lite-div', {survey: "P/PanSTARRS/DR1/color-i-r-g", fov:0.05, target:"{{ object.ra }} {{ object.dec }}"});
+
+        var SNLayer = A.catalog({name: 'Transient', sourceSize: 10, color: 'red', shape: 'triangle', onClick: 'showPopup'});
+        var NED = A.catalog({name: 'NED', sourceSize: 5, color: 'blue', shape: 'circle', onClick: 'showPopup'});
+        var SIMBAD = A.catalog({name: 'SIMBAD', sourceSize: 10, color: 'green', shape: 'pluss', onClick: 'showPopup'});
+        SNLayer.addSources([A.marker({{ object.ra }}, {{ object.dec }}, {popupTitle:'{{ object.TNS_name }}', popupDesc:''})]);
+        {% if object.galaxy %}
+          SNLayer.addSources([A.marker({{ object.galaxy.ra }}, {{ object.galaxy.dec }}, {popupTitle:'Assumed Host Galaxy', popupDesc:'z: {{ object.galaxy.z|floatformat:7 }}<br>z_err: {{object.galaxy.z_err|floatformat:8 }}'})]);
+        {% endif %}
+        {% for repo,cand_list in object.galaxy.candidate_galaxies.items %}
+          {% if repo == "NED" %}
+            {% for x in cand_list %}
+              NED.addSources([A.source({{ x.2 }}, {{ x.3 }}, {Name:'{{ x.0 }}', Type: '{{ x.1 }}', RA:'{{ x.2 }}', Dec:'{{ x.3 }}', z: '{{ x.4|floatformat:7 }}', z_err: '{{ x.5|floatformat:7 }}', B: '{{ x.6|floatformat:3 }}', V: '{{ x.7|floatformat:3 }}', G: '{{ x.8|floatformat:3 }}', J: '{{ x.9|floatformat:3 }}', g: '{{ x.10|floatformat:3 }}', r: '{{ x.11|floatformat:3 }}', i: '{{ x.12|floatformat:3 }}'})])
+            {% endfor %}
+          {% elif repo == "simbad" %}
+            {% for x in cand_list %}
+          SIMBAD.addSources([A.source({{ x.2 }}, {{ x.3 }}, {Name:'{{ x.0 }}', Type:'{{ x.1 }}', RA:'{{ x.2 }}', Dec:'{{ x.3 }}', z: '{{ x.4|floatformat:7 }}', z_err: '{{ x.5|floatformat:7 }}', B: '{{ x.6|floatformat:3 }}', V: '{{ x.7|floatformat:3 }}', G: '{{ x.8|floatformat:3 }}', J: '{{ x.9|floatformat:3 }}', g: '{{ x.10|floatformat:3 }}', r: '{{ x.11|floatformat:3 }}', i: '{{ x.12|floatformat:3 }}'})])
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        aladin.addCatalog(SNLayer);
+        aladin.addCatalog(NED);
+        aladin.addCatalog(SIMBAD);
+        aladin.addCatalog(SNLayer);
+
+        // define function triggered when an object is clicked
+        var objClicked;
+        aladin.on('objectClicked', function(object) {
+                        var msg;
+                        if (object) {
+                                     objClicked = object;
+                                     object.select();
+                                     msg = object.catalog.name + ': ' + object.data.Name;
+                                    }
+                        else {
+                              objClicked.deselect();
+                              msg = 'No galaxy on record. Going off of crosshairs.\nRA: ' +aladin.getRaDec()[0] + '\nDec: ' + aladin.getRaDec()[1];
+                             }
+                        document.getElementById('galcoords').setAttribute("value", msg);
+                  })
+
+      </script>
+    </div>
+  </div>
+  <div class="right">
+    <div>
+      {{ div|safe }}
+    </div>
+  </div>
+</div>
+<div class="Footer">
+  <div class="ImgTable">
+    <table style="width:100%">
+      <tr>
+        <th style="width:10%">Image Name</th>
+        <th>No Subtraction</th>
+        {% if object.reference_set.first %}
+          <th>Reference Subtraction</th>
+        {% endif %}
+        {% if object.galaxy.ra %}
+          <th>Rotational Subtraction</th>
+        {% endif %}
+      </tr>
+      {% for obs in observations %}
+        <tr>
+            <form name="{{ obs.name }}" action="." method="POST">{% csrf_token %}
+            <td rowspan="2" style="width:10%">{{ obs.name }}
+              <input name="dx_{{ obs.name }}" type="number" step="0.01" value="{{ obs.image_set.last.rot_dx }}"> <!-- relies on rotsub being last in image set -->
+              <input name="dy_{{ obs.name }}" type="number" step="0.01" value="{{ obs.image_set.last.rot_dy }}"> <!-- relies on rotsub being last in image set -->
+              <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="none" {% if obs.preferred_sub_type == 'none' %} checked {% endif %} style="display:none">
+              <input type="submit" value="Submit">
+            </td>
+            <td>
+              <label>
+                <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="nosub" {% if obs.preferred_sub_type == 'nosub' %} checked {% endif %}>
+                <img src="/media/{{ object.TNS_name }}/{{ obs.name }}.nosub.png">
+              </label>
+            </td>
+            {% if object.reference_set.first %}
+              <td>
+                <label>
+                  <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="refsub" {% if obs.preferred_sub_type == 'refsub' %} checked {% endif %}>
+                  <img src="/media/{{ object.TNS_name }}/{{ obs.name }}.refsub.png">
+                </label>
+              </td>
+            {% endif %}
+            {% if object.galaxy.ra %}
+              <td>
+                <label>
+                  <input class="image_radio" type="radio" name="sub_type_{{ obs.name }}" value="rotsub" {% if obs.preferred_sub_type == 'rotsub' %} checked {% endif %}>
+                  <img src="/media/{{ object.TNS_name }}/{{ obs.name }}.rotsub.png">
+                </label>
+              </td>
+            {% endif %}
+          </form>
+        </tr>
+        <tr>
+          {% for res in obs.results_set.all %}
+            {% if res.sub_type == 'nosub' %}
+              {% if res.phot_type == 'ap' %} <!-- fix hard-coding. maybe add selector -->
+                <td>
+                  {{ obs.bandpass }} = {{ res.mag|floatformat:3 }}
+                  +/- {{ res.dmag|floatformat:3 }}
+                </td>
+              {% endif %}
+            {% elif res.sub_type == 'refsub' %}
+              {% if res.phot_type == 'ap' %} <!-- fix hard-coding. maybe add selector -->
+                <td>
+                  {{ obs.bandpass }} = {{ res.mag|floatformat:3 }}
+                  +/- {{ res.dmag|floatformat:3 }}
+                </td>
+              {% endif %}
+            {% elif res.sub_type == 'rotsub' %}
+              {% if res.phot_type == 'ap' %} <!-- fix hard-coding. maybe add selector -->
+                <td>
+                  {{ obs.bandpass }} = {{ res.mag|floatformat:3 }}
+                  +/- {{ res.dmag|floatformat:3 }}
+                </td>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<script>
+var checked_val = "none";
+var name = "sub_type_name";
+$(".image_radio").on("click", function(){
+  name = $(this).attr("name");
+  if($(this).val() == checked_val){
+    $('input[name='+name+'][value=none]').prop("checked",true);
+    checked_val = "none";
+  }else{
+    checked_val = $(this).val();
+    $('input[name='+name+'][value=none]').propRemove("checked");
+  }
+});
+</script>
+{% endblock %}

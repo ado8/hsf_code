@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Disclaimer</h2>
+<p>
+This site is still under active development, so things are subject to change without notice.
+</p>
+<h2>Hubble</h2>
+Hubble plot showing various configurations of subtraction and photometry algorithms.
+<h2>Targets</h2>
+Most info will be in the targets module.
+The targets are broken into four categories.
+<ul>
+  <li><a href="/targets/list/c/">Candidates</a>: Recently identified targets that may be useful to the project</li>
+  <li><a href="/targets/list/j/">Junk</a>: Targets that have been deemed not useful to the project. These targets may still be useful for other science, or for optical only distance measurements</li>
+  <li><a href="/targets/list/q/">Queued</a>: Targets that are currently queued for UKIRT observation</li>
+  <li><a href="/targets/list/d/">Done</a>: Targets that have been observed with UKIRT and are no longer in the queue</li>
+</ul>
+<h2>UKIRT Helper</h2>
+Tools to create an xml file for importing into the UKIRT observing tool.
+<ol>
+  <li>
+    Synchronize the database with the oberving tool. Perform one of the following:
+    <ul>
+      <li>Calculate today's MSB list based on yesterday's file and the observed MSBs on the project website.</li>
+      <li>Export today's MSB list as YYMMDD.xml and put it on the drive in the ukirt_ot_backups folder.</li>
+    </ul>
+  </li>
+  <li>Click on the first target in the table of candidates</li>
+  <li>Choose designation for each target: queue if the target looks like an early Ia, junk if it looks late or rises too fast, or candidate if the target isn't obviously good or bad.</li>
+  <li>Checkout with the button and wait for the progress bar to go from 0 to 100</li>
+  <li>Download the file new_YYMMDD.xml from the drive and import it to the observing tool</li>
+  <li>Address a known bug. Sometimes GUIDE or SKYGUIDE have an extra term at 5h45m ish RA. Remove those.</li>
+  <li>Submit the observations to the UKIRT database</li>
+</ol>
+
+<h2>Goals</h2>
+<p>Short and long term goals. Often not up to date. One day, should become a to-do list or work blog<p>
+
+<h2>Account</h2>
+<p>Log in/out, create and manage a personal list of targets</p>
+{% endblock %}

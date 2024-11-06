@@ -1,0 +1,68 @@
+<form action="./{{ query_string }}" method=POST style="margin:0;padding:0">{% csrf_token %}
+  <table style="">
+    <tr><td colspan="3"><h2>{{ millenium }}{{ object.TNS_name }}</h2></tr>
+    {% if sub_set %}
+      <tr><td><a href="{{ prev_path }}">Previous</a></td>
+          <td>{{ idx }}/{{ count }}</td>
+          <td><a href="{{ next_path }}">Next</a></td>
+      </tr>
+    {% endif %}
+    <tr><td colspan="3"><h3>See on <a href="https://www.wis-tns.org/object/{{ millenium }}{{ object.TNS_name }}">TNS</a>
+    or <a href="/galaxies/{{ object.TNS_name }}">just galaxy info</a></h3></td></tr>
+
+
+    <tr><td>Time till peak</td>
+      {% if object.time_to_peak %}
+        <td colspan="2">{{ object.time_to_peak }}</td>
+      {% else %}
+        <td colspan="2">Past peak</td>
+      {% endif %}
+    </tr>
+    <tr><td colspan=3> SN RA/Dec </td></tr>
+    <tr><td>Deg</td><td>{{ object.ra|floatformat:4 }}</td><td>{{ object.dec|floatformat:5 }}</td>
+    <tr><td>HMS</td><td>{{ object.HMS_coords.0 }}</td><td>{{ object.HMS_coords.1 }}</td></tr>
+    <tr><td>Type</td><td colspan="2">{{ target_form.sn_type }}</td></tr>
+    <tr><td>Discovering Group</td><td colspan="2"> {{ object.discovering_group }}</td></tr>
+    <tr><td>Detection Date</td><td colspan="2"> {{ object.detection_date|floatformat:3 }}</td></tr>
+    <tr><td>Queue Status</td><td colspan="2">{{ target_form.queue_status }}</td></tr>
+    <tr><td>UKIRT Epochs</td><td colspan="2"> {{ epochs }}</td></tr>
+    <tr><td>Fit Status</td><td colspan="2">{{ target_form.fit_status }}</td></tr>
+    <tr><td>Subtraction Status</td><td colspan="2">{{ target_form.sub_status }}</td></tr>
+    <tr><td>Galaxy Status</td><td colspan="2"> {{ target_form.galaxy_status }}</td></tr>
+    {% if object.galaxy %}
+      <tr><td colspan=3> Galaxy RA/Dec </td></tr>
+      <tr><td>Deg</td><td>{{ object.galaxy.ra|floatformat:4 }}</td><td>{{ object.galaxy.dec|floatformat:5 }}</td>
+      <tr><td>HMS</td><td>{{ object.galaxy.HMS_coords.0 }}</td><td>{{ object.galaxy.HMS_coords.1 }}</td></tr>
+      <tr><td>PGC ID</td><td colspan="2"> {{ galaxy_form.pgc_no }}</td></tr>
+      <tr><td>Redshift Status</td><td colspan="2"> {{ galaxy_form.z_flag }}</td></tr>
+      <tr><td>Redshift</td><td colspan="2"> {{ galaxy_form.z }}</td></tr>
+      <tr><td>z_err</td><td colspan="2"> {{ galaxy_form.z_err }}</td></tr>
+      <!--
+      {% for bp,mag in best_ned.photometry|get_value_in_qs:'observed_passband photometry_measurement' %}
+        <tr><td>  {{ bp }}</td><td colspan="2"> {{ mag|floatformat:2 }}</td></tr>
+      {% endfor %}
+      {% if best_simbad %}
+        <tr><td>B</td><td colspan="2"> {{ best_simbad.flux_b|floatformat:2 }}</td></tr>
+        <tr><td>V</td><td colspan="2"> {{ best_simbad.flux_v|floatformat:2 }}</td></tr>
+        <tr><td>g</td><td colspan="2"> {{ best_simbad.flux_g|floatformat:2 }}</td></tr>
+        <tr><td>r</td><td colspan="2"> {{ best_simbad.flux_r|floatformat:2 }}</td></tr>
+        <tr><td>i</td><td colspan="2"> {{ best_simbad.flux_i|floatformat:2 }}</td></tr>
+        <tr><td>J</td><td colspan="2"> {{ best_simbad.flux_j|floatformat:2 }}</td></tr>
+      {% endif %}
+      {% if best_ps1 %}
+        <tr><td> g PSF </td><td colspan="2"> {{ best_ps1.gpsfmag|floatformat:2 }}</td></tr>
+        <tr><td> g Aperture </td><td colspan="2"> {{ best_ps1.gapmag|floatformat:2 }}</td></tr>
+        <tr><td> g Kron </td><td colspan="2"> {{ best_ps1.gkronmag|floatformat:2 }}</td></tr>
+        <tr><td> r Kron </td><td colspan="2"> {{ best_ps1.rkronmag|floatformat:2 }}</td></tr>
+      {% endif %}
+      --!>
+    {% endif %}
+    <tr><td><input type="submit" value="Submit changes"></td>
+    <td colspan="2">
+      <select name="submission_action">
+        <option value="next_target">and go to next</option>
+        <option value="refresh">and refresh</option>
+      </select>
+    </td></tr>
+  </table>
+</form>

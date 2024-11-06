@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>Hawaii Supernova Flows</title>
+		{% block extrahead %}
+		{% endblock %}
+
+		<style>
+			body {
+				color: #FFFFFF;
+				background-color: #121212;
+			}
+
+			a:link {
+				color: lightblue;
+			}
+
+			a:visited {
+				color: red;
+			}
+
+			a:hover {
+				color: yellow;
+			}
+
+            .row{
+                display: flex;
+                flex-wrap: wrap:
+            }
+
+            .left {
+                flex: 38%;
+                padding: 3px;
+            }
+
+            .right{
+                flex: 58%;
+                padding: 3px;
+            }
+
+            .footer {
+                padding: 3px;
+            }
+
+            table {
+              padding: 0px;
+              border-collapse: collapse;
+              margin-top: 0px;
+            }
+
+            th, td {
+              border: 1px solid white;
+              padding: 2px;
+              text-align: center;
+            }
+
+            div.btn-grp input {
+            	background-color: #024731; /* Green background */
+            	border: 1px solid #024731; /* Green background */
+            	color: white; /* White text */
+            	padding: 10px 24px; /* Some padding */
+            	cursor: pointer; /* Pointer/hand icon */
+            	float: left; /* Float the buttons side by side */
+            }
+
+            div.btn-grp input:not(:last-child) {
+            	border-right: none: /* Prevent double borders */
+            }
+
+            /* Clear floats (clearfix hack) */
+            .btn-grp:after {
+            	content: "";
+            	clear: both;
+            	display: table;
+            }
+
+            /* Add a background color on hover */
+            .btn-grp input:hover {
+            	background-color: #3e8e41;
+            }
+
+            .collapsible {
+                background-color: #024731;
+                color: white;
+                cursor: pointer;
+                padding: 18px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                outline: none;
+                font-size: 24px;
+            }
+
+            .active, .collapsible:hover {
+                background-color: #3e8e41;
+            }
+
+            .collapsible:after {
+                 content: '\002B';
+                 color: white;
+                 font-weight: bold;
+                 float: right;
+                 margin-left: 5px;
+            }
+
+            .active:after {
+                 content: "\2212";
+            }
+
+            .CollapsibleContent {
+                padding: 0 18px;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.2s ease-out;
+                background-color: #000;
+            }
+
+			{% block extrastyle %}
+			{% endblock %}
+		</style>
+	</head>
+	<body>
+<link href="https://cdn.pydata.org/bokeh/release/bokeh-3.4.1.min.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-3.4.1.min.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.4.1.min.js"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.4.1.min.js"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.4.1.min.js"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-3.4.1.min.js"
+    crossorigin="anonymous"></script>
+<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.1.min.js" charset="utf-8"></script>
+		<div class="container mt-3">
+			{% include 'navbar.html' %}
+        	{% block content %}
+			{% endblock %}
+		</div>
+	</body>
+</html>

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block extrahead  %}
+
+{{ script|safe }}
+
+{% endblock %}
+
+{% block extrastyle %}
+/* HIDE RADIO */
+[type=radio] {
+position: absolute;
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+/* IMAGE STYLES */
+[type=radio] + img {
+cursor: pointer;
+}
+
+[type=radio] + th {
+cursor: pointer;
+}
+
+/* CHECKED STYLES */
+[type=radio]:checked + img {
+outline: 2px solid #f00;
+}
+
+[type=radio]:checked + th {
+outline: 2px solid #f00;
+}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="left">
+    <div class="row">
+      <div class="left">
+        {% include 'stats.html' %}
+      </div>
+      <div class="right" style="display:flex;;justify-content:space-between;flex-direction:column;">
+        <div>
+          <!-- fix to config selector  -->
+          <table style="width:100%;">
+            <tr>
+              <th><h2>SNPY</h2></th>
+              <th>Value</th>
+              <th>Stat</th>
+              <th>Sys</th>
+            </tr>
+            {% for res in fitresults %}
+              {% if res.fitter == 'snpy' and res.sub_type == 'nosub' %}
+                {% for key,list in res.summarize.0.items %}
+                  <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ list.0|floatformat:3 }}</td>
+                    <td>{{ list.1|floatformat:3 }}</td>
+                    <td>{{ list.2|floatformat:3 }}</td>
+                  </tr>
+                {% endfor %}
+                {% for key,chi in res.summarize.1.items %}
+                  <tr>
+                      <td> chi2 {{ key }} </td>
+                    <td colspan="3"> {{ chi|floatformat:2 }} </td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+        {% block extramiddle %}
+        {% endblock %}
+        <div class="btn-grp">
+          <form action="./{{ query_string }}" method="POST">{% csrf_token %}
+            <input type="submit" name="get_candidates_btn" id="get_candidates" value="Get nearby candidates">
+            <input type="submit" name="set_host_galaxy_btn" id="set_host_galaxy" value="Set as Host Galaxy">
+            <input style="width:100%;" type="text" name="aladin_coords" id="aladin_coords" value="Aladin Target">
+          </form>
+        </div>
+      </div>
+    </div>
+    {% include 'aladin.html' %}
+  </div>
+  <div class="right">
+    <div>
+      {{ div|safe }}
+    </div>
+
+    <div class="btn-grp">
+        <a href="/targets/download_lc/?TNS_name={{ object.TNS_name }}&sub_type=nosub">
+          Download Lightcurve
+        </a>
+        <a href="/targets/download_plot/?TNS_name={{ object.TNS_name }}">
+          Download Plot
+        </a>
+    </div>
+    {% if task_id %}
+      {% include 'progressbar.html' with return_url="/targets/" %}
+    {% endif %}
+  </div>
+</div>
+{% block extrabottom %}
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,96 @@
+This is a shallow clone of the full HSF codebase without any sensitive information.
+The database is unpopulated and cannot be fully repopulated from the hsf_DR1 repo.
+My intention is not for users to run the code and reproduce HSF results, but to provide a record of the logic used to create those results.
+Time permitting, I may come back in the future to improve functionality such that the survey paper results can be reproduced exactly from just this and the hsf_DR1 repo.
+
+Current scheme:
+
+Apps:
+targets (demographic information for each TNS target + custom targets, access to scripts)
+data (fits file level objects. routines for subtraction, photometry)
+fitting (various fitters)
+galaxies (galaxy information, database scrapings)
+lightcurves (all filters, routines for updating)
+ot (read old MSBList, generate new ones)
+pages (website utilities)
+
+targets: record diagnostic info, observation history, etc.
+Target
+    TNS_name: primary key, last two digits of year + alphabetical code (e.g. SN 2023abc -> 23abc)
+    tns_sn_z: Supernova redshift as reported on TNS (null ok)
+    tns_host_gal: Name of host galaxy as reported on TNS (null ok)
+    tns_host_gal_z: Redshift of host galaxy as reported on TNS (null ok)
+    galaxy: Foreign key. Many-to-one relationship to allow siblings. See galaxies.models.Galaxy. (null ok)
+    queue_status: One letter code for observation triggering purposes.
+        ("c", "Candidate")
+        ("q", "Queued")
+        ("j", "Junk")
+        ("d", "Done")
+    status_reason: Text field explaining certain status codes if not obvious.
+    galaxy_status: One letter code for galaxy availability.
+        ("?", "Uninspected")
+        ("c", "Clear host")
+        ("m", "Multiple possible hosts")
+        ("n", "No apparent galaxy")
+    fit_status: One letter code for the quality of a given fit.
+        I should probably deprecate this and move it to fitting.models.FitResults
+    sub_status: One letter code for the quality of a subtraction.
+        I should probably adjust this to apply to Rubin's code and not ISIS subtraction or rotational subtraction.
+    sn_type: Foreign key to sn_type to allow for type hierarchy. See targets.models.TransientType
+    ra: Right ascension in J2000.0 degrees. Equal to tns_ra if not overwritten.
+    dec: Declination in J2000.0 degrees. Equal to tns_dec if not overwritten.
+    tns_ra: Right ascension in degrees as reported on TNS.
+    tns_dec: Declination in degrees as reported on TNS.
+    detection_date: MJD of discovery date on TNS.
+    discovering_group: Name of group to submit discovery report to TNS.
+    other_detections: Dictionary with keys for other groups and values of internal name and MJD.
+    classification_date: Date of spectroscopic classification, 0 if not available.
+    classifying_group: Name of group to submit classification, blank if not available.
+    other_classifications: Dictionary with keys for groups and values for MJD and classification.
+    ATLAS_name: ATLAS internal name (null ok)
+    ZTF_name: ZTF internal name (null ok)
+    queue_date: MJD of first entry into queue
+        Potentially redundant with some ot target_detail information. Might deprecate.
+    airmass: Dictionary containing airmass information for observing purposes.
+        Might deprecate since some observing logic is part of the ukirt_candidates.
+    bandpasses_str: alphabetical string of bandpasses with observations
+    current_values: Dictionary containing current magnitudes.
+    peak_values: Dictionary containing peak magnitudes.
+    tmax: MJD of maximum light in J
+    manual_z: For overriding galaxy redshifts. Might deprecate.
+    manual_z_err: for overriding galaxy redshift errors. Might deprecate
+    comments: Misc. comments
+TransientType
+
+data: handles data products from UKIRT, SNIFS, Subaru
+Observations
+Image
+ReferenceStar
+ReferenceStarDetails
+DetectedStar
+CalspecSpectrum
+UH88Spectrum
+SubaruSpectrum
+TemplateSpectrum
+
+galaxy: record galaxies near coordinates. Status of galaxy identification. Redshift methodology, quality, sources.
+Galaxy
+NedEntry
+SimbadEntry
+PanstarrsEntry
+GladeEntry
+
+fitting: take lightcurve in, produce DM, EBVhost, etc. and uncertainties.
+FitResults
+
+lightcurves: take list of observations in, produce lightcurves with options to vary subtraction method and photometry method.
+Lightcurve
+AtlasDetection
+ZTFDetection
+AsassnDetection
+UkirtDetection
+ModelDetection
+
+ot: updates observing info.
+MSB
+TargetDetails

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action='.' method='POST'>{% csrf_token %}
+    {% if check_404 %}
+    <p> That page doesn't seem to exist on TNS. Tough nuggets.
+    {% else %}
+	<p>I don't see AT{{ TNS_name }} in the database. Do you want to add it? It might take a bit.</p>
+	{{ form }}
+	<p><input type='submit' value='Add to Database' /> <a href='../'>Cancel</a></p>
+</form>
+    {% endif %}
+	
+{% endblock %}

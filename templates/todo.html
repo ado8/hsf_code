@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!--
+<h1> Deadlines </h1>
+<p> Today is {{ today }}, MJD = {{ mjd_today }}</p>
+<ul>
+  {% for dl in deadlines %}
+  <li>{{ dl.0 }} ({{ dl.1 }} days): {{ dl.2 }}</li>
+  {% endfor %}
+</ul>
+--!>
+<h1>Jobs</h1>
+<h3>for anyone</h3>
+<p>
+<ul>
+    <li>({{ gal_ident }}) Go through <a href='/targets/search/?sn_type=Ia&&galaxy_status=%3F&galaxy_manually_inspected=unknown&min_obs_num=1'>this list</a> and mark the host galaxies as Clear Host, Multiple possible hosts, or No Apparent Galaxy</li>
+    <li>({{ gal_inspected }}) Go through <a href='/targets/search/?sn_type=Ia&galaxy_manually_inspected=false&min_obs_num=1'>this list</a> and make sure the host galaxy is marked correctly in the aladin window. You may want to press the Candidate Galaxies button to get lists of nearby galaxies from cone searches in NED/Simbad/PanSTARRS/GLADE+.</li>
+    <li>({{ ud_inspected }}) In the shell, play the detection game. I'll make a page for this stuff soon. <br>
+        for ud in UkirtDetection.objects.filter(status='?'): <br>
+        &nbsp;&nbsp;if ud.lc.bandpass.endswitH('rot'): <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ud.observation.sn_image.inspect('rotsub') <br>
+        &nbsp;&nbsp;else: <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ud.observation.sn_image.inspect('nosub')
+    </li>
+</ul>
+</p>
+
+<!--
+<h3>For Brent</h3>
+<p>
+<ul>
+    <li>({{ tully_uninspected }}) Go through <a href='/targets/needs_brent'>this list</a> and check the redshifts for accuracy. If the redshift is already good, press submit so the database knows that you've seen in.</li>
+</ul>
+</p>
+--!>
+{% endblock %}

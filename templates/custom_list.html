@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block extrastyle %}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 50px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th {
+  cursor: pointer;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #202020;
+}
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="column">
+    <h2>My List</h2>
+    <p> Type one or more TNS names below to add or remove them to your list. Use the usual format (e.g. 21abc, not AT2021abc). Separate names with commas, whitespace, or commas and whitespace. If you type anything else I'll assume you're up to no good.</p>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ cl_form }}
+        <input type="submit" name="cl" value="Submit">
+    </form>
+    </div>
+
+  <div class="column">
+    <h2>When do you want emails?</h2>
+    <p> You currently requested {{ email_preferences }} at a rate of {{ email_frequency }} </p>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ ep_form }}
+        <input type="submit" name="ep" value="Submit">
+    </form>
+  </div>
+</div>
+
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+{% if new == True %}
+<h3> There's nothing on your list </h3>
+{% else %}
+<table class="sortable">
+  <tr>
+    <th>TNS Name</th>
+    <th>RA</th>
+    <th>Dec</th>
+    <th>Host z</th>
+    <th>Type</th>
+    <th>Discovery Date</th>
+    <th>Days until peak</th>
+    <th>c</th>
+    <th>o</th>
+    <th>ztfg</th>
+    <th>ztfr</th>
+    <th>ASg</th>
+    <th>J</th>
+    <th># of UKIRT epochs</th>
+    <th>Last Observed on UKIRT</th>
+    <th>Minimum z</th>
+    <th>Obs window start</th>
+    <th>Obs window end</th>
+  </tr>
+
+  {% for instance in sn_list %}
+    <tr class="item">
+      <td><a href='{{ instance.get_absolute_url }}'>{{ instance.TNS_name }}</a></td>
+      <td>{{ instance.RA|floatformat:2 }}</td>
+      <td>{{ instance.Dec|floatformat:2 }}</td>
+      {% if instance.z_flag == True %}
+        <td>{{ instance.host_z|floatformat:5 }}</td>
+      {% else %}
+        <td></td>
+      {% endif %}
+      <td>{{ instance.detected_MJD|floatformat:1 }}</td>
+      <td>{{ instance.SN_type }}</td> 
+      <td>{{ instance.time_to_peak|floatformat:1 }} </td>
+      {% for key, value in instance.current_mag.items %}
+        {% if value != 99 %}
+          <td>{{ value|floatformat:1 }}</td>
+        {% else %}
+          <td></td>
+        {% endif %}
+      {% endfor %}
+      <td>{{ instance.J_epochs|length }}</td>
+      <td>{{ instance.J_epochs|last }}</td>
+      {% for key, value in instance.observing_dict.items %}
+        <td>{{ value }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}

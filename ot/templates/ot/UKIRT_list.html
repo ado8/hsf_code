@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block extrastyle %}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th {
+  cursor: pointer;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #202020;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+{% endblock %}
+
+{% block content %}
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+<div class='row'>
+  <div class='column'>
+    {% if task_id %}
+      <div class='progress-wrapper' style="padding-top: 10px;">
+        <div id='progress-bar' class='progress-bar' role='progressbar' style="height:30px; width: 0%; border-radius: 5px; background-color: #68a9ef">&nbsp;</div>
+      </div>
+      <div id="progress-bar-message">Receiving Task</div>
+      <div id="celery-result"></div>
+
+      <script type="text/javascript">
+        var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+        function processProgress(progressBarElement, progressBarMessageElement, progress) {
+          progressBarElement.style.width = progress.percent + "%";
+          var description = progress.description || progress.percent;
+          progressBarMessageElement.innerHTML = description;
+        }
+
+        function processSuccess(progressBarElement, progressBarMessageElement, result) {
+            // Build Success URL (replace 'namespace' with your own)
+            var success_url = "/UKIRT_helper/"
+            // Redirect to URL
+            window.location.replace(success_url)
+        }
+
+        // Progress Bar (JQuery)
+        $(function () {
+          CeleryProgressBar.initProgressBar(progressUrl, {
+            onProgress: processProgress,
+            onSuccess: processSuccess,
+          })
+        });
+      </script>
+    {% elif latest == today %}
+      <h2> Database is synced </h2>
+      <p> Go through the candidates below and then checkout. </p>
+      <form action='.' method='POST'>{% csrf_token %}
+        <input type='submit' name='checkout' value="Check out"/>
+      </form>
+      <a href="/UKIRT_helper/download_xml/">
+      Download XML (Right click, Save link as)
+      </a>
+    {% else %}
+      <h2> Database not synced </h2>
+      <p> Latest entry in database from {{latest}}. Today is {{today}}.</p>
+      <p> Automatic updates must have failed. For now, fetch the program in the observing tool, save xml to the drive and press Sync. Then tell Aaron.</p>
+      <form action='.' method='POST'>{% csrf_token %}
+        <input type='submit' name='sync_from_drive' value="Sync"/>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class='row'>
+  <div class='column'>
+    <div class='tooltip'>
+      <h2>
+        In list
+      </h2>
+      <span class='tooltiptext'>
+        Targets currently in the queue
+      </span>
+    </div>
+    <ul>
+    {% if in_set.count > 0 %}
+      {% for tod in in_set %}
+        <li>{{ tod.remaining }} x
+          <a href='/UKIRT_helper/{{ tod.target.TNS_name }}'>{{ tod.target.TNS_name }}</a>
+          {% for fet in filters_exp_times|get_item:tod.target.TNS_name %}
+            {{ fet }}
+          {% endfor %}
+        </li>
+      {% endfor %}
+    {% else %}
+      <p>Nothing</p>
+    {% endif %}
+    </ul>
+  </div>
+  <div class='column'>
+    <div class='tooltip'>
+      <h2>
+        Add list
+      </h2>
+      <span class='tooltiptext'>
+        Candidates to be added to the queue
+      </span>
+    </div>
+    <ul>
+    {% if add_set.count > 0 %}
+      {% for tod in add_set %}
+        <li>{{ tod.remaining }} x
+          <a href='/UKIRT_helper/{{ tod.target.TNS_name }}'>{{ tod.target.TNS_name }}</a>
+          {% for fet in filters_exp_times|get_item:tod.target.TNS_name %}
+            {{ fet }}
+          {% endfor %}
+        </li>
+      {% endfor %}
+    {% else %}
+      <p>Nothing</p>
+    {% endif %}
+    </ul>
+  </div>
+  <div class='column'>
+    <div class='tooltip'>
+      <h2>
+        Reject list
+      </h2>
+      <span class='tooltiptext'>
+        Candidates to be classified as 'junk'
+      </span>
+    </div>
+    <ul>
+    {% if reject_set.count > 0 %}
+      {% for tod in reject_set %}
+        <li><a href='/UKIRT_helper/{{ tod.target.TNS_name }}'>{{ tod.target.TNS_name }}</a></li>
+      {% endfor %}
+    {% else %}
+      <p>Nothing</p>
+    {% endif %}
+    </ul>
+  </div>
+</div>
+
+<div class='row'>
+  <div class='column'>
+    <div class='tooltip'>
+      <h2>
+        Change list
+      </h2>
+      <span class='tooltiptext'>
+        Queued targets that need a new exposure time
+      </span>
+    </div>
+    <ul>
+    {% if change_set.count > 0 %}
+      {% for tod in change_set %}
+        <li><a href='/UKIRT_helper/{{ tod.target.TNS_name }}'>{{ tod.target.TNS_name }}</a>: {{ tod.exp_times }} s</li>
+      {% endfor %}
+    {% else %}
+      <p>Nothing</p>
+    {% endif %}
+    </ul>
+  </div>
+  <div class='column'>
+    <div class='tooltip'>
+      <h2>
+        Drop list
+      </h2>
+      <span class='tooltiptext'>
+        Queued targets that need to be dropped
+      </span>
+    </div>
+    <ul>
+    {% if drop_set.count > 0 %}
+      {% for tod in drop_set %}
+        <form action='.' method='POST'>{% csrf_token %}
+            <li><input type='submit' name='drop_{{tod.target.TNS_name}}' value="x"/> <a href='/UKIRT_helper/{{ tod.target.TNS_name }}'>{{tod.target.TNS_name }}</a>: {{ tod.target.status_reason }}</li>
+        </form>
+      {% endfor %}
+    {% else %}
+      <p>Nothing</p>
+    {% endif %}
+    </ul>
+  </div>
+  <div class='column'>
+    <div class='tooltip'>
+      <h2>
+        Observed Last Night
+      </h2>
+      <span class='tooltiptext'>
+        Queued targets that were observed last night
+      </span>
+    </div>
+    <ul>
+    {% if observed_set.count > 0 %}
+      {% for tod in observed_set %}
+        <li><a href='/UKIRT_helper/{{ tod.target.TNS_name }}'>{{ tod.target.TNS_name }}</a></li>
+      {% endfor %}
+    {% else %}
+      <p>Nothing</p>
+    {% endif %}
+    </ul>
+  </div>
+</div>
+
+{% include 'target_table.html' %}
+
+{% endblock %}

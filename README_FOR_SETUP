@@ -1,0 +1,44 @@
+# heavily based on https://realpython.com/django-nginx-gunicorn/
+
+sudo yum install nginx
+
+# install certbot
+# https://certbot.eff.org/instructions?ws=nginx&os=centosrhel7
+# https://snapcraft.io/docs/installing-snap-on-centos
+sudo yum install snapd
+sudo systemctl enable --now snapd.socket
+sudo ln -s /var/lib/snapd/snap /snap
+
+# logout, log back in
+sudo snap install core
+sudo snap refresh core
+sudo yum remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
+sudo firewall-cmd --permanent --zone=public --add-service=http
+sudo firewall-cmd --permanent --zone=public --add-service=https
+sudo firewall-cmd --reload
+
+# test
+sudo nginx -t
+sudo certbot --nginx
+
+# move .service files to /etc/systemd/system/ for celery, celerybeat, redis, gunicorn
+# in home
+wget https://download.redis.io/redis-stable.tar.gz
+tar -xvzf redis-stable.tar.gz
+cd redis-stable
+make
+sudo make install
+sudo mkdir /etc/redis
+# move redis.conf to /etc/redis
+
+sudo usermod -a -G {NEW_USERNAME} {GROUP_NAME}
+
+# setting up python environment (stored in env directory)
+# Setting up snpy
+cd to env folder and github install snpy
+$git clone https://github.com/ado8/snpy.git snpy
+$git clone https://github.com/ado8/sncosmo.git sncosmo
+$git clone https://github.com/bayesn/bayesn.git bayesn

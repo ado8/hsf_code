@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="left">
+    <h3>NED Redshift Information</h3>
+  </div>
+  <div class="right">
+    <h3><a href='/targets/{{ object.TNS_name }}'>Back to target page</a></h3>
+  </div>
+</div>
+<table>
+  <tr>
+    <th>No.</th>
+    <th>Frequency Targeted</th>
+    <th>Velocity</th>
+    <th>Velocity Uncertainty</th>
+    <th>Redshift</th>
+    <th>Redshift Uncertainty</th>
+    <th>Refcode</th>
+  </tr>
+  {% for entry in object.ned_z %}
+    <tr>
+      {% for key,val in entry.items %}
+        {% if key in z_cols %}
+          <td>{{ val }}</td>
+        {% endif %}
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+{% for entry in object.ned_z %}
+  <div class="row" style="border-top:solid 3px #024731;width:100%">
+    <div class="left">
+      {% for key,val in entry.items %}
+        {{ key }}: {{ val }}
+        <br>
+        {% if key == 'Spectral Range' %}
+          </div>
+          <div class="right">
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}

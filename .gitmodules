@@ -1,0 +1,9 @@
+[submodule "env/sncosmo"]
+	path = env/sncosmo
+	url = https://github.com/ado8/sncosmo
+[submodule "env/snpy"]
+	path = env/snpy
+	url = https://github.com/ado8/snpy
+[submodule "env/bayesn"]
+	path = env/bayesn
+	url = https://github.com/bayesn/bayesn

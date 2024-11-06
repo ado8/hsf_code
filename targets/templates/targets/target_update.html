@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action='.' method='POST'>{% csrf_token %}
+	<h3>Do you want to look for more data for 20{{ obj.TNS_name }}?</h3>
+        <p> Do you want to overwrite any data that is already there? {{ form }}</p>
+	<p><input type='submit' value='Yes' /> <a href='../'>Cancel</a></p>
+</form>
+
+{% endblock %}
